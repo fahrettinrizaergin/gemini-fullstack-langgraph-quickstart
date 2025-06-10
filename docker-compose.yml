@@ -1,7 +1,10 @@
-version: "2.4"
+# Remove the version: "2.4" line (or set to "3.8" or "3")
+version: "3.8"
+
 volumes:
   langgraph-data:
     driver: local
+
 services:
   langgraph-redis:
     image: docker.io/redis:6
@@ -10,6 +13,7 @@ services:
       interval: 5s
       timeout: 1s
       retries: 5
+
   langgraph-postgres:
     image: docker.io/postgres:16
     ports:
@@ -26,15 +30,14 @@ services:
       timeout: 1s
       retries: 5
       interval: 5s
+
   langgraph-api:
     image: gemini-fullstack-langgraph
     ports:
       - "8123:8000"
     depends_on:
-      langgraph-redis:
-        condition: service_healthy
-      langgraph-postgres:
-        condition: service_healthy
+      - langgraph-redis
+      - langgraph-postgres
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
